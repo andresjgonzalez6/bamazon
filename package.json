@@ -1,0 +1,11 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "homework for mysql",
+  "main": "bamazonCustomer.js",
+  "dependencies": {
+    "inquirer": "^3.3.0",
+    "mysql": "^2.16.0",
+    "require": "^2.4.20"
+  }
+}
