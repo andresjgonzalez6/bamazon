@@ -3,131 +3,72 @@
 // npm install mysql
 // npm install inquirer
 
-var mysql = require("mysql");
-var inquirer = require("inquirer");
+//require('dotenv').config();
+let mysql = require("mysql");
+let inquirer = require("inquirer");
 
-var connection = mysql.createConnection({
+// Give Connection Credentials
+let connection = mysql.createConnection({
   host: "localhost",
-
-  // Your port; default is 3306
   port: 3306,
-
-  // Your username
   user: "root",
-
-  // Your password
   password: "Sette!2018",
   database: "bamazon_db"
 });
 
-  // in terminal, type in: node bamazonCustomer.js 
-connection.connect(function(err) {
-    if (err) throw err;
-    console.log("connection made")
-    runSearch();  //This is the application the user see's
-  });
+// in terminal, type in: node bamazonCustomer.js 
+connection.connect(function (err) {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  console.log('Connected to threadId: ' + connection.threadId);
+});
 
-function runSearch() {
+let displayQuery = 'SELECT * FROM products';
 
-  connection.query("SELECT * FROM products", function(err, res) {  
-    // 1. Display all items. Include the ids, names, and prices.
-    if (err) throw err;
-
-    // Log all results of the SELECT statement
-    console.log(res);
-    console.log('\n' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n');
-  })
-
-    inquirer
-      .prompt({
-        name: "product",
-        type: "list",
-        message: "What product would you like to buy?", // 2. Prompt the User "What would you like to buy?" BELOW
-        choices: [
-          "Phone",
-          "TV",
-          "Computer",
-          "Blender",
-          "Bowl",
-          "Spoon",
-          "Hat",
-          "Pants",
-          "Shirt", 
-          "Boots"
-        ]
-      })
-      .then(function(product) { 
-        switch (answer.product) {
-        case "Phone":
-          units(res[i].item_id.1);
-          break;
-  
-        case "TV":
-          units(res[i].item_id.2);
-          break;
-  
-        case "Computer":
-          units(res[i].item_id.3);
-          break;
-  
-        case "Blender":
-          units(res[i].item_id.4);
-          break;
-            
-        case "Bowl":
-          units(res[i].item_id.5);
-         break;
-            
-        case "Spoon":
-          units(res[i].item_id.6);
-         break;
-          
-        case "Hat":
-          units(res[i].item_id.7);
-          break;
-            
-        case "Pants":
-         units(res[i].item_id.8);
-          break;
-          
-        case "Shirt":
-          units(res[i].item_id.9);
-          break;
-
-        case "Boots":
-          units(res[i].item_id.10);
-          break;
-        }
-      });
+connection.query(displayQuery, function (err, result, fields) {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  for (let i = 0; i < result.length; i++) {
+    let restable = result[i]; // TAKE A LOOK HERE //
+    console.log('\nItem Number: ' + i + '\nItem ID: ' + restable.item_id + '\nProduct Name: ' + restable.product_name + '\nDepartment: ' + restable.department_name + '\nPrice: ' + restable.price + '\nStock: ' + restable.stock_quantity);
   }
 
-  function units() { // 3. Prompt the User "How many units?"
-    inquirer
-      .prompt({
-        name: "units",
-        type: "input",
-        message: "How many units would you like to buy?"
-        // answer - stock_quantity FROM item_id
-      })
-      .then(function(answer) {
-        var query = "SELECT position, song, year FROM top5000 WHERE ?";
-        connection.query(query, { units: answer.units }, function(err, res) {
-          for (var i = 0; i < res.length; i++) {
-            console.log("Position: " + res[i].position + " || Song: " + res[i].song + " || Year: " + res[i].year);
-          }
-          
-          if (answer < res[i].stock_quantity) {
+  inquirer.prompt([{
+    name: 'item_id',
+    message: 'Input the number of the item you would like to purchase'
+  },
+  {
+    name: 'qty',
+    message: 'How many would you like?'
 
-            var query2 = "SUBTRACT stock_quantity FROM item_id WHERE ?";
-
-          } else{
-              return console.log("Sorry, we do not have enough in stock.")
-          }
-
-        });
-      });
+  }]).then(res => {
+    if (isNaN(res.item_id) || isNaN(res.qty)) {
+      console.log('Invalid ID or Quantity');
+      connection.end();
+      return;
     }
 
+    let = sum = result[res.item_id].price * res.qty;
+
+    let change = 'UPDATE products SET stock_quantity = ' + (result[res.item_id].stock_quantity - res.qty) + 'WHERE item_id = ' + result[res.item_id].item_id;
+
+    connection.query(change, (err, result, fields) => {
+      if (err) {
+        console.log(result[res.item_id].stock_quantity);
+        console.log(err);
+        console.log('QUERY STRING: ' + change);
+      }
+      console.log('Order total: $' + sum.toFixed(2));
+      connection.end(err => {
+        if (err) console.log(err)
+      });
+    })
+  })
+});
 
 
 //      connection.end(
@@ -135,8 +76,9 @@ function runSearch() {
     //  );
 
 
-
-
+    // 1. Display all items. Include the ids, names, and prices.
+// 2. Prompt the User "What would you like to buy?" BELOW
+// 3. Prompt the User "How many units?"
 
 // 4. Check if there are enough units to fulfill order. 
 // NOT ENOUGH PRODUCT= Prevent order from going through.
