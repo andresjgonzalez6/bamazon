@@ -54,14 +54,18 @@ connection.query(displayQuery, function (err, result, fields) {
 
     let = sum = result[res.item_id].price * res.qty;
 
-    let change = 'UPDATE products SET stock_quantity = ' + (result[res.item_id].stock_quantity - res.qty) + 'WHERE item_id = ' + result[res.item_id].item_id;
+    let change = 'UPDATE products SET stock_quantity = ' + (result[res.item_id].stock_quantity - res.qty) + ' WHERE item_id = ' + result[res.item_id].item_id;
+
+    console.log(" Item ID: "+ res.item_id);
 
     connection.query(change, (err, result, fields) => {
       if (err) {
-        console.log(result[res.item_id].stock_quantity);
         console.log(err);
         console.log('QUERY STRING: ' + change);
       }
+      console.log("res = " + res);
+      console.log("result = " + result);
+
       console.log('Order total: $' + sum.toFixed(2));
       connection.end(err => {
         if (err) console.log(err)
@@ -74,6 +78,9 @@ connection.query(displayQuery, function (err, result, fields) {
 //      connection.end(
   //      console.log("ending program DONE")
     //  );
+
+// " res.item " needs to be switched to ' i '
+// " res.item = wrong because it should actually be res.in"
 
 
     // 1. Display all items. Include the ids, names, and prices.
