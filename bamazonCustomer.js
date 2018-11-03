@@ -27,7 +27,7 @@ connection.connect(function (err) {
 
 let displayQuery = 'SELECT * FROM products';
 
-connection.query(displayQuery, function (err, result, fields) {
+connection.query(displayQuery, function (err, result) {
   if (err) {
     console.log(err);
     return;
@@ -39,11 +39,11 @@ connection.query(displayQuery, function (err, result, fields) {
 
   inquirer.prompt([{
     name: 'item_id',
-    message: 'Input the number of the item you would like to purchase'
+    message: 'What is the "Item Number" of your product?'
   },
   {
     name: 'qty',
-    message: 'How many would you like?'
+    message: 'How many produts to purchase?'
 
   }]).then(res => {
     if (isNaN(res.item_id) || isNaN(res.qty)) {
@@ -58,13 +58,13 @@ connection.query(displayQuery, function (err, result, fields) {
 
     console.log(" Item ID: "+ res.item_id);
 
-    connection.query(change, (err, result, fields) => {
+    connection.query(change, (err, result) => {
       if (err) {
         console.log(err);
         console.log('QUERY STRING: ' + change);
       }
-      console.log("res = " + res);
-      console.log("result = " + result);
+      //console.log("res = " + res);
+      //console.log("result = " + result);
 
       console.log('Order total: $' + sum.toFixed(2));
       connection.end(err => {
